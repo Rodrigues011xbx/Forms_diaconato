@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - Retiro de Diáconos 2026</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="shortcut icon" href="./img/user.png" type="image/x-icon">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="container container-admin">
+        <header class="admin-header">
+            <div>
+                <h1>Painel de Controle</h1>
+                <p class="subtitle" style="margin-left: 0;">Inscrições 4º Retiro Nacional de Diáconos 2026</p>
+                <a href="index.html" style="font-size: 0.8rem; color: var(--primary-color); text-decoration: none; display: flex; align-items: center; gap: 4px; margin-top: 5px;">
+                    <i data-lucide="arrow-left" style="width: 12px;"></i>
+                    Voltar para Inscrição
+                </a>
+            </div>
+            <button id="refreshBtn" class="refresh-btn">
+                <i data-lucide="refresh-cw" style="width: 16px;"></i>
+                Atualizar Dados
+            </button>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="value" id="totalInscritos">0</div>
+                <div class="label">Total de Inscrições</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" id="totalCidades">0</div>
+                <div class="label">Cidades Representadas</div>
+            </div>
+            <div class="stat-card">
+                <div class="value" id="ultimaInscricao">-</div>
+                <div class="label">Última Inscrição</div>
+            </div>
+        </div>
+
+        <!-- Table Responsive Container -->
+        <div class="table-container">
+            <table id="inscricoesTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">Nome Completo</th>
+                        <th onclick="sortTable(1)">Cidade</th>
+                        <th onclick="sortTable(2)">Cobertura</th>
+                        <th onclick="sortTable(3)">Função</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 4rem;">
+                            <div class="spinner" style="display: block; margin: 0 auto 10px; border-top-color: var(--primary-color);"></div>
+                            <span style="color: var(--text-muted);">Carregando inscrições...</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer style="margin-top: 4rem;">
+            Administração Diaconia no Brasil – Painel Exclusivo de Controle
+        </footer>
+    </div>
+
+    <!-- Script specifically for the admin data fetching -->
+    <script>
+        // --- CONFIGURAÇÃO: LINK DA PLANILHA ---
+        // 1. Link do App Script (mais rápido/tempo real) OU link CSV (mais lento)
+        const GOOGLE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSDPjEO0XIY23ja8AXgp_MMlAROki5UGv_mpQaTt0K_sueP5vpwxB4WhNZsFD1-AEbh6xrpBQFyvoIC/pub?output=csv"; 
+
+        async function fetchInscricoes() {
+            const tableBody = document.getElementById("tableBody");
+            const refreshBtn = document.getElementById("refreshBtn");
+            const spinner = refreshBtn.querySelector('i');
+            
+            if(spinner) spinner.style.animation = "spin 1s linear infinite";
+            refreshBtn.disabled = true;
+
+            try {
+                let data = [];
+                
+                if (GOOGLE_URL && GOOGLE_URL.startsWith('http')) {
+                    // Cache buster: adiciona timestamp para evitar cache do navegador/Google
+                    const separator = GOOGLE_URL.includes('?') ? '&' : '?';
+                    const finalUrl = GOOGLE_URL + separator + 't=' + new Date().getTime();
+                    
+                    const response = await fetch(finalUrl);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Conexão instável (${response.status})`);
+                    }
+                    
+                    const text = await response.text();
+                    
+                    // Verifica se o retorno é JSON (App Script) ou CSV
+                    if (text.trim().startsWith('[') || text.trim().startsWith('{')) {
+                        data = JSON.parse(text);
+                    } else if (text.includes("<!DOCTYPE html>")) {
+                        throw new Error("Link incorreto. Use o link do App Script ou publique como CSV.");
+                    } else {
+                        data = parseCSV(text);
+                    }
+                } else {
+                    console.warn("Nenhum link configurado. Carregando dados de demonstração.");
+                    data = [
+                        { nome: "Exemplo João", cidade: "Rio de Janeiro", cobertura: "Igreja Central", funcao: "Diácono" }
+                    ];
+                }
+
+                updateUI(data);
+                
+            } catch (error) {
+                console.error("Erro detetado:", error);
+                tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #ef4444; padding: 2rem;">
+                    <i data-lucide="alert-circle" style="display: block; margin: 0 auto 10px;"></i>
+                    <b>Erro na atualização:</b><br>${error.message}<br>
+                    <span style="font-size: 0.8rem; opacity: 0.7;">Tente novamente em alguns segundos.</span>
+                </td></tr>`;
+                lucide.createIcons();
+            } finally {
+                if(spinner) spinner.style.animation = "";
+                refreshBtn.disabled = false;
+            }
+        }
+
+        // Robust CSV Parser (smart version)
+        function parseCSV(csv) {
+            const lines = csv.split("\n").map(l => l.trim()).filter(l => l.length > 0);
+            if (lines.length < 2) return [];
+
+            // Pega os cabeçalhos e limpa eles (remove acentos, espaços extras, etc)
+            const headers = lines[0].split(",").map(h => {
+                return h.trim().toLowerCase()
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Remove acentos
+                    .replace(/\(.*\)/g, "") // Remove parênteses e o que tem dentro
+                    .split(" ")[0]; // Pega só a primeira palavra (nome, cidade, cobertura, funcao)
+            });
+
+            return lines.slice(1).map(line => {
+                // Suporte a valores CSV com vírgulas internas entre aspas (se necessário)
+                const values = line.split(",").map(v => v.trim());
+                const entry = {};
+                headers.forEach((header, index) => {
+                    entry[header] = values[index] || "";
+                });
+                return entry;
+            });
+        }
+
+        function updateUI(data) {
+            const tableBody = document.getElementById("tableBody");
+            const totalInscritos = document.getElementById("totalInscritos");
+            const totalCidades = document.getElementById("totalCidades");
+            const ultimaInscricao = document.getElementById("ultimaInscricao");
+
+            tableBody.innerHTML = "";
+            totalInscritos.innerText = data.length;
+            
+            const uniqueCidades = [...new Set(data.map(item => item.cidade))];
+            totalCidades.innerText = uniqueCidades.length;
+            
+            ultimaInscricao.innerText = data.length > 0 ? "Hoje" : "-";
+
+            data.forEach(item => {
+                const row = `
+                    <tr>
+                        <td style="font-weight: 600;">${item.nome || 'N/A'}</td>
+                        <td>${item.cidade || 'N/A'}</td>
+                        <td>${item.cobertura || 'N/A'}</td>
+                        <td><span style="background: rgba(99, 102, 241, 0.1); color: var(--primary-color); padding: 4px 10px; border-radius: 20px; font-size: 0.8rem;">${item.funcao || 'N/A'}</span></td>
+                        <td>
+                            <i data-lucide="more-horizontal" style="width: 18px; cursor: pointer; opacity: 0.5;"></i>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+            
+            lucide.createIcons();
+        }
+
+        function sortTable(n) {
+            // Sort implementation would go here
+            console.log("Sort table index: ", n);
+        }
+
+        document.getElementById("refreshBtn").addEventListener("click", () => {
+            fetchInscricoes();
+        });
+
+        // Initial Load
+        window.addEventListener("DOMContentLoaded", () => {
+            fetchInscricoes();
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

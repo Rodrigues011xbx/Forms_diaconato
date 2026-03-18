@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4º Retiro Nacional de Diáconos 2026 - Inscrição</title>
+    <meta name="description" content="Um tempo dedicado ao alinhamento do serviço diaconal, visão estratégica e formação ministerial.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons -->
+     <link rel="shortcut icon" href="./img/sign-form.png" type="image/x-icon">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>4º Retiro Nacional</h1>
+            <p class="subtitle">de Diáconos 2026</p>
+            <p class="subtitle" style="font-size: 0.95rem; margin-top: 1rem;">Um tempo dedicado ao alinhamento do serviço diaconal, visão estratégica e formação ministerial.</p>
+        </header>
+
+        <main class="form-card">
+            <!-- Registration Form -->
+            <form id="registrationForm" action="https://formsubmit.co/ajax/diaconato.maceio@gmail.com" method="POST">
+                <!-- Config Hidden Fields -->
+                <input type="hidden" name="_subject" value="Nova inscrição - Retiro de Diáconos">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_template" value="table">
+                <!-- Will use JS to handle redirect and success state -->
+                <input type="hidden" name="_next" value="" id="form-next">
+
+                <div class="input-group">
+                    <input type="text" id="nome" name="nome" placeholder=" " required>
+                    <label for="nome">Nome completo</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="cidade" name="cidade" placeholder=" " required>
+                    <label for="cidade">Cidade</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="cobertura" name="cobertura" placeholder=" " required>
+                    <label for="cobertura">Cobertura (igreja/local)</label>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="funcao" name="funcao" placeholder=" " required>
+                    <label for="funcao">Função</label>
+                </div>
+
+                <div class="input-group">
+                    <textarea id="dificuldade" name="dificuldade" placeholder=" " required></textarea>
+                    <label for="dificuldade">Maior dificuldade para realizar a inscrição</label>
+                </div>
+
+                <button type="submit" id="submitBtn">
+                    <span>Finalizar Inscrição</span>
+                    <i data-lucide="arrow-right" style="width: 18px;"></i>
+                    <div class="spinner" id="btnSpinner"></div>
+                </button>
+            </form>
+
+            <!-- Success State -->
+            <div id="successMessage" class="success-msg">
+                <div class="success-icon">
+                    <i data-lucide="check"></i>
+                </div>
+                <h2>Tudo pronto!</h2>
+                <p>Sua inscrição no 4º Retiro Nacional de Diáconos foi recebida com sucesso. Em breve entraremos em contato.</p>
+                <button onclick="resetForm()" class="refresh-btn" style="margin: 2rem auto 0; width: auto; background: var(--text-muted);">
+                    Realizar outra inscrição
+                </button>
+            </div>
+        </main>
+
+        <footer>
+            <a href="admin.html" style="color: inherit; text-decoration: none; cursor: default;">Diaconia no Brasil</a> – Comissão Organizadora <br>
+            <div style="margin-top: 10px; opacity: 0.7;">&copy; 2026 Todos os direitos reservados.</div>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
