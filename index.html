@@ -21,73 +21,79 @@
     <div class="bg-blobs">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
     </div>
 
-    <div class="container">
+    <div class="container container-form">
         <header>
             <h1>4º Retiro Nacional</h1>
             <p class="subtitle">de Diáconos 2026</p>
-            <p class="subtitle" style="font-size: 0.95rem; margin-top: 1rem;">Um tempo dedicado ao alinhamento do serviço diaconal, visão estratégica e formação ministerial.</p>
+            <p class="subtitle" style="font-size: 0.95rem; margin-top: 1rem; line-height: 1.4;">Um tempo dedicado ao alinhamento do serviço diaconal, visão estratégica e formação ministerial.</p>
         </header>
 
-        <main class="form-card">
+        <main class="form-card" role="main">
             <!-- Registration Form -->
-            <form id="registrationForm" action="https://formsubmit.co/ajax/diaconato.maceio@gmail.com" method="POST">
+            <form id="registrationForm" action="https://formsubmit.co/ajax/gabrielrodriguescalixto7@gmail.com" method="POST" aria-labelledby="form-title">
+                <h2 id="form-title" class="sr-only">Formulário de Inscrição</h2>
                 <!-- Config Hidden Fields -->
                 <input type="hidden" name="_subject" value="Nova inscrição - Retiro de Diáconos">
                 <input type="hidden" name="_captcha" value="false">
                 <input type="hidden" name="_template" value="table">
-                <!-- Will use JS to handle redirect and success state -->
                 <input type="hidden" name="_next" value="" id="form-next">
 
                 <div class="input-group">
-                    <input type="text" id="nome" name="nome" placeholder=" " required>
+                    <input type="text" id="nome" name="nome" placeholder=" " required aria-required="true">
                     <label for="nome">Nome completo</label>
                 </div>
 
                 <div class="input-group">
-                    <input type="text" id="cidade" name="cidade" placeholder=" " required>
+                    <input type="text" id="cidade" name="cidade" placeholder=" " required aria-required="true">
                     <label for="cidade">Cidade</label>
                 </div>
 
                 <div class="input-group">
-                    <input type="text" id="cobertura" name="cobertura" placeholder=" " required>
+                    <input type="text" id="cobertura" name="cobertura" placeholder=" " required aria-required="true">
                     <label for="cobertura">Cobertura (igreja/local)</label>
                 </div>
 
                 <div class="input-group">
-                    <input type="text" id="funcao" name="funcao" placeholder=" " required>
+                    <input type="text" id="funcao" name="funcao" placeholder=" " required aria-required="true">
                     <label for="funcao">Função</label>
                 </div>
 
                 <div class="input-group">
-                    <textarea id="dificuldade" name="dificuldade" placeholder=" " required></textarea>
+                    <textarea id="dificuldade" name="dificuldade" placeholder=" " required aria-required="true"></textarea>
                     <label for="dificuldade">Maior dificuldade para realizar a inscrição</label>
                 </div>
 
                 <button type="submit" id="submitBtn">
                     <span>Finalizar Inscrição</span>
-                    <i data-lucide="arrow-right" style="width: 18px;"></i>
+                    <i data-lucide="arrow-right" style="width: 20px;"></i>
                     <div class="spinner" id="btnSpinner"></div>
                 </button>
             </form>
 
             <!-- Success State -->
-            <div id="successMessage" class="success-msg">
+            <div id="successMessage" class="success-msg" aria-live="polite">
                 <div class="success-icon">
                     <i data-lucide="check"></i>
                 </div>
                 <h2>Tudo pronto!</h2>
                 <p>Sua inscrição no 4º Retiro Nacional de Diáconos foi recebida com sucesso. Em breve entraremos em contato.</p>
-                <button onclick="resetForm()" class="refresh-btn" style="margin: 2rem auto 0; width: auto; background: var(--text-muted);">
+                <button onclick="resetForm()" class="refresh-btn" style="margin: 0 auto;">
                     Realizar outra inscrição
                 </button>
             </div>
         </main>
 
         <footer>
-            <a href="admin.html" target="_blank" style="color: inherit; text-decoration: none; cursor: default;">Diaconia no Brasil</a> – Comissão Organizadora <br>
-            <div style="margin-top: 10px; opacity: 0.7;">&copy; 2026 Todos os direitos reservados.</div>
+            <div style="margin-bottom: 0.5rem;">
+                <a href="admin.html" class="footer-link">Gestão Interna</a>
+            </div>
+            <div>
+                Diaconia no Brasil – Comissão Organizadora <br>
+                <div style="margin-top: 10px; opacity: 0.7;">&copy; 2026 Todos os direitos reservados.</div>
+            </div>
         </footer>
     </div>
 
