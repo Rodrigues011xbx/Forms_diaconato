@@ -27,7 +27,7 @@
     <div class="layout-grid">
         <aside class="image-side">
             <div class="image-container">
-                <img src="./img/hero.png" alt="4º Retiro Nacional de Diáconos 2026" class="hero-image">
+                <img src="./img/img-atual.jpeg" alt="4º Retiro Nacional de Diáconos 2026" class="hero-image">
                 <div class="image-overlay"></div>
                 <div class="floating-badge">
                     <i data-lucide="award"></i>
@@ -44,46 +44,76 @@
             </header>
 
             <main class="form-card" role="main">
+                <!-- Progress Bar (Mobile Only) -->
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+
                 <!-- Registration Form -->
                 <form id="registrationForm" action="https://formsubmit.co/ajax/diaconato.maceio@gmail.com" method="POST" aria-labelledby="form-title">
-                    <h2 id="form-title" class="sr-only">Formulário de Inscrição</h2>
+                    <h2 id="form-title" class="sr-only">Formulário de Pesquisa</h2>
                     <!-- Config Hidden Fields -->
                     <input type="hidden" name="_subject" value="Nova inscrição - Retiro de Diáconos">
                     <input type="hidden" name="_captcha" value="false">
                     <input type="hidden" name="_template" value="table">
                     <input type="hidden" name="_next" value="" id="form-next">
 
-                    <div class="input-group">
-                        <input type="text" id="nome" name="nome" placeholder=" " required aria-required="true">
-                        <label for="nome">Nome completo</label>
-                    </div>
-
-                    <div class="input-row">
+                    <!-- Step 1: Nome -->
+                    <div class="form-step active" data-step="1">
                         <div class="input-group">
-                            <input type="text" id="cidade" name="cidade" placeholder=" " required aria-required="true">
-                            <label for="cidade">Cidade</label>
-                        </div>
-                        <div class="input-group">
-                            <input type="text" id="funcao" name="funcao" placeholder=" " required aria-required="true">
-                            <label for="funcao">Função</label>
+                            <input type="text" id="nome" name="nome" placeholder=" " required aria-required="true">
+                            <label for="nome">Nome completo</label>
                         </div>
                     </div>
 
-                    <div class="input-group">
-                        <input type="text" id="cobertura" name="cobertura" placeholder=" " required aria-required="true">
-                        <label for="cobertura">Cobertura (igreja/local)</label>
+                    <!-- Step 2: Cidade / Função -->
+                    <div class="form-step" data-step="2">
+                        <div class="input-row">
+                            <div class="input-group">
+                                <input type="text" id="cidade" name="cidade" placeholder=" " required aria-required="true">
+                                <label for="cidade">Cidade</label>
+                            </div>
+                            <div class="input-group">
+                                <input type="text" id="funcao" name="funcao" placeholder=" " required aria-required="true">
+                                <label for="funcao">Função</label>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="input-group">
-                        <textarea id="dificuldade" name="dificuldade" placeholder=" " required aria-required="true"></textarea>
-                        <label for="dificuldade">Maior dificuldade para se inscrever</label>
+                    <!-- Step 3: Cobertura -->
+                    <div class="form-step" data-step="3">
+                        <div class="input-group">
+                            <input type="text" id="cobertura" name="cobertura" placeholder=" " required aria-required="true">
+                            <label for="cobertura">Cobertura (igreja/local)</label>
+                        </div>
                     </div>
 
-                    <button type="submit" id="submitBtn">
-                        <span>Finalizar Pesquisa</span>
-                        <i data-lucide="arrow-right" style="width: 20px;"></i>
-                        <div class="spinner" id="btnSpinner"></div>
-                    </button>
+                    <!-- Step 4: Dificuldade -->
+                    <div class="form-step" data-step="4">
+                        <div class="input-group">
+                            <textarea id="dificuldade" name="dificuldade" placeholder=" " required aria-required="true"></textarea>
+                            <label for="dificuldade">Sua maior dificuldade hoje</label>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="form-navigation">
+                        <button type="button" id="prevBtn" class="nav-btn secondary" style="display: none;">
+                            <i data-lucide="chevron-left"></i>
+                            <span>Voltar</span>
+                        </button>
+                        
+                        <button type="button" id="nextBtn" class="nav-btn primary">
+                            <span>Próximo</span>
+                            <i data-lucide="chevron-right"></i>
+                        </button>
+
+                        <button type="submit" id="submitBtn" class="nav-btn submit-btn" style="display: none;">
+                            <span>Finalizar Inscrição</span>
+                            <i data-lucide="send"></i>
+                            <div class="spinner" id="btnSpinner"></div>
+                        </button>
+                    </div>
                 </form>
 
                 <!-- Success State -->
@@ -100,12 +130,11 @@
             </main>
 
             <footer>
-                <div style="margin-bottom: 0.5rem;">
+                <div style="margin-bottom: 0.25rem;">
                     <a href="admin.html" class="footer-link">Gestão Interna</a>
                 </div>
                 <div>
-                    Diaconia no Brasil – Comissão Organizadora <br>
-                    <div style="margin-top: 10px; opacity: 0.7;">&copy; 2026 Todos os direitos reservados.</div>
+                    Diaconia no Brasil – 2026. <br>
                 </div>
             </footer>
         </div>

@@ -1,27 +1,91 @@
 // --- CONFIGURAÇÃO: GOOGLE SHEETS ---
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzyDpDenum_8Azss41UZmFqyjpgt_kAo0v5uAnDVa8Ufp2sr-jW69OQ2sZUN8tfeek5/exec"; 
 
+// --- MULTI-STEP FORM NAVIGATION ---
+const steps = document.querySelectorAll('.form-step');
+const nextBtn = document.getElementById('nextBtn');
+const prevBtn = document.getElementById('prevBtn');
+const submitBtn = document.getElementById('submitBtn');
+const progressBar = document.getElementById('progressBar');
+let currentStep = 1;
+
+function updateSteps() {
+    steps.forEach(step => {
+        step.classList.remove('active');
+        if (parseInt(step.dataset.step) === currentStep) {
+            step.classList.add('active');
+        }
+    });
+
+    // Update Progress
+    const progress = (currentStep / steps.length) * 100;
+    if (progressBar) progressBar.style.width = `${progress}%`;
+
+    // Update Buttons
+    if (prevBtn) prevBtn.style.display = currentStep === 1 ? 'none' : 'flex';
+    
+    if (currentStep === steps.length) {
+        if (nextBtn) nextBtn.style.display = 'none';
+        if (submitBtn) submitBtn.style.display = 'flex';
+    } else {
+        if (nextBtn) nextBtn.style.display = 'flex';
+        if (submitBtn) submitBtn.style.display = 'none';
+    }
+
+    // Focus first input of the step
+    const activeStep = document.querySelector('.form-step.active');
+    activeStep?.querySelector('input, textarea')?.focus();
+}
+
+function validateStep() {
+    const activeStep = document.querySelector('.form-step.active');
+    const inputs = activeStep?.querySelectorAll('input[required], textarea[required]');
+    let isValid = true;
+
+    inputs?.forEach(input => {
+        if (!input.value.trim()) {
+            isValid = false;
+            input.parentElement.classList.add('shake');
+            setTimeout(() => input.parentElement.classList.remove('shake'), 400);
+        }
+    });
+
+    return isValid;
+}
+
+nextBtn?.addEventListener('click', () => {
+    if (validateStep()) {
+        currentStep++;
+        updateSteps();
+    }
+});
+
+prevBtn?.addEventListener('click', () => {
+    currentStep--;
+    updateSteps();
+});
+
+// Initialize Steps
+updateSteps();
+
 // Form Submission Handling
 document.getElementById('registrationForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
     
     const form = e.target;
-    const submitBtn = document.getElementById('submitBtn');
     const btnText = submitBtn?.querySelector('span');
     const btnIcon = submitBtn?.querySelector('i, svg');
     const btnSpinner = document.getElementById('btnSpinner');
     const successMsg = document.getElementById('successMessage');
+    const progressContainer = document.querySelector('.progress-container');
     
-    // Validate if button exists
     if (!submitBtn) return;
 
-    // START LOADING STATE
     submitBtn.disabled = true;
     const originalBtnText = btnText ? btnText.innerText : "Finalizar Inscrição";
     
     if (btnText) {
         btnText.innerText = "Processando...";
-        btnText.style.opacity = '0.7';
     }
     if (btnIcon) btnIcon.style.display = 'none';
     if (btnSpinner) btnSpinner.style.display = 'block';
@@ -30,7 +94,6 @@ document.getElementById('registrationForm')?.addEventListener('submit', async fu
     const data = Object.fromEntries(formData.entries());
     
     try {
-        // --- ENVIO 1: FORMSUBMIT (E-MAIL) ---
         const formSubmitPromise = fetch(form.action, {
             method: 'POST',
             body: JSON.stringify(data),
@@ -40,7 +103,6 @@ document.getElementById('registrationForm')?.addEventListener('submit', async fu
             }
         });
 
-        // --- ENVIO 2: GOOGLE SHEETS (OPCIONAL) ---
         let sheetsPromise = Promise.resolve();
         if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL.startsWith('http')) {
             sheetsPromise = fetch(GOOGLE_SCRIPT_URL, {
@@ -50,32 +112,23 @@ document.getElementById('registrationForm')?.addEventListener('submit', async fu
             });
         }
 
-        // Wait for both but prioritize FormSubmit result for the UI
         const [response] = await Promise.all([formSubmitPromise, sheetsPromise]);
         
         if (response.ok) {
-            // SUCCESS
             form.style.display = 'none';
+            if (progressContainer) progressContainer.style.display = 'none';
             successMsg.style.display = 'block';
-            
-            // Focus on success message for screen readers
             successMsg.focus();
-            
             form.reset();
-            console.log('Inscrição enviada com sucesso');
         } else {
             throw new Error('Falha no servidor');
         }
     } catch (error) {
         console.error('Submission Error:', error);
-        alert('Ops! Tivemos um problema técnico. Por favor, tente novamente ou fale conosco diretamente.');
+        alert('Ops! Tivemos um problema técnico. Por favor, tente novamente.');
     } finally {
-        // END LOADING STATE
         submitBtn.disabled = false;
-        if (btnText) {
-            btnText.innerText = originalBtnText;
-            btnText.style.opacity = '1';
-        }
+        if (btnText) btnText.innerText = originalBtnText;
         if (btnIcon) btnIcon.style.display = 'block';
         if (btnSpinner) btnSpinner.style.display = 'none';
         lucide.createIcons();
