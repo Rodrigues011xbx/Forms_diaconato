@@ -105,37 +105,63 @@ body::before {
 }
 
 /* Layout Containers */
+.layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  width: 100%;
+}
+
+@media (max-width: 1024px) {
+  .layout-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .image-side {
+    display: none;
+  }
+}
+
 .container {
-  width: min(92%, 1200px);
-  margin: 0 auto;
-  padding: 4rem 1rem;
+  width: 100%;
+  padding: 2rem 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   min-height: 100vh;
 }
 
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem 0.75rem;
+    justify-content: flex-start; /* Better for mobile if it overflows slightly */
+  }
+}
+
 .container-form {
-  max-width: 600px;
+  max-width: 100%;
+  background: transparent;
 }
 
 .container-admin {
   width: min(95%, 1400px);
+  margin: 0 auto;
 }
 
 /* Header Styles */
 header {
   text-align: center;
-  margin-bottom: 3.5rem;
+  margin-bottom: 0.75rem;
   width: 100%;
 }
 
 h1 {
-  font-size: clamp(2.5rem, 8vw, 4rem);
+  font-size: clamp(1.4rem, 4vw, 1.8rem);
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1;
   letter-spacing: -0.04em;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.2rem;
   background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
   -webkit-background-clip: text;
   background-clip: text;
@@ -143,24 +169,106 @@ h1 {
 }
 
 .subtitle {
-  font-size: clamp(1rem, 4vw, 1.25rem);
+  font-size: 0.8rem;
   color: var(--text-muted);
   font-weight: 500;
-  max-width: 600px;
+  max-width: 400px;
   margin: 0 auto;
 }
 
 /* Form Card */
 .form-card {
   background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-xl);
-  padding: clamp(1.5rem, 5vw, 3.5rem);
-  width: 100%;
-  box-shadow: var(--card-shadow);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  width: min(100%, 540px);
+  box-shadow: 
+    0 20px 40px -10px rgba(0, 0, 0, 0.05),
+    0 0 0 1px rgba(255, 255, 255, 0.4) inset;
   animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  z-index: 10;
+}
+
+@media (max-width: 480px) {
+  .form-card {
+    padding: 1.25rem 1rem;
+    border-radius: var(--radius-md);
+  }
+}
+
+/* Image Side & 3D Effect */
+.image-side {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0f172a;
+  overflow: hidden;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  max-width: 500px;
+  max-height: min(85vh, 650px);
+  border-radius: var(--radius-lg);
+  perspective: 1500px;
+  cursor: pointer;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-xl);
+  box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.5);
+  transform: rotateY(-15deg) rotateX(5deg);
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  filter: brightness(0.8) contrast(1.1);
+}
+
+.image-container:hover .hero-image {
+  transform: rotateY(-5deg) rotateX(2deg) scale(1.02);
+  filter: brightness(1) contrast(1.1);
+}
+
+.image-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(to bottom, transparent 60%, rgba(15, 23, 42, 0.8));
+  pointer-events: none;
+}
+
+.floating-badge {
+  position: absolute;
+  bottom: 2rem;
+  left: 2rem;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  color: var(--text-main);
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+  transform: translateZ(50px);
+  animation: floatBadge 4s infinite ease-in-out;
+}
+
+@keyframes floatBadge {
+  0%, 100% { transform: translateY(0) translateZ(50px); }
+  50% { transform: translateY(-10px) translateZ(50px); }
 }
 
 @keyframes slideUp {
@@ -169,32 +277,51 @@ h1 {
 }
 
 /* Form Groups */
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+@media (max-width: 600px) {
+  .input-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
 .input-group {
   position: relative;
-  margin-bottom: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+@media (max-width: 480px) {
+  .input-group {
+    margin-bottom: 0.6rem;
+  }
 }
 
 .input-group label {
   position: absolute;
-  left: 1.25rem;
-  top: 1.25rem;
+  left: 0.75rem;
+  top: 0.75rem;
   color: var(--text-muted);
   pointer-events: none;
   transition: var(--transition);
   font-weight: 500;
-  font-size: 1rem;
-  line-height: 1.2; /* Tighter line height for long labels */
-  max-width: 85%; /* Prevent label from hitting the right edge */
+  font-size: 0.85rem;
+  line-height: 1.2;
+  max-width: 90%;
 }
 
 input, textarea, select {
   width: 100%;
-  padding: 1.75rem 1.25rem 0.75rem;
+  padding: 1.2rem 0.75rem 0.4rem;
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(0, 0, 0, 0.05);
   border-radius: var(--radius-md);
   color: var(--text-main);
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 500;
   font-family: inherit;
   outline: none;
@@ -202,22 +329,9 @@ input, textarea, select {
 }
 
 textarea {
-  padding-top: 2.5rem; /* Even more padding to accommodate long floating labels */
-  min-height: 140px;
-  resize: vertical;
-}
-
-/* Specific transform for textarea label to avoid collision */
-textarea:focus + label,
-textarea:not(:placeholder-shown) + label {
-  transform: translateY(-1.1rem) scale(0.75) !important;
-}
-
-input:focus, textarea:focus, select:focus {
-  background: #fff;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-  transform: translateY(-2px);
+  padding-top: 1.75rem;
+  min-height: 60px;
+  resize: none;
 }
 
 input:focus + label,
@@ -225,32 +339,31 @@ input:not(:placeholder-shown) + label,
 textarea:focus + label,
 textarea:not(:placeholder-shown) + label,
 select:focus + label {
-  transform: translateY(-0.85rem) scale(0.8);
+  transform: translateY(-0.65rem) scale(0.75);
   transform-origin: left top;
   color: var(--primary);
   font-weight: 700;
 }
 
-textarea {
-  min-height: 120px;
-  resize: vertical;
+input:focus, textarea:focus {
+  background: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
-
-/* Custom Checkbox/Radio if needed later */
 
 /* Buttons */
 button {
   width: 100%;
-  padding: 1.15rem 2rem;
+  padding: 0.85rem 1.5rem;
   border-radius: var(--radius-md);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
   border: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
   transition: var(--transition);
   position: relative;
   overflow: hidden;
@@ -437,18 +550,27 @@ tr:hover td {
 }
 
 .success-icon {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   background: var(--success);
   color: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 2rem;
-  font-size: 2.5rem;
+  margin: 0 auto 1.5rem;
+  font-size: 1.75rem;
   box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
   animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@media (max-width: 480px) {
+  .success-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
 }
 
 @keyframes popIn {
@@ -457,24 +579,30 @@ tr:hover td {
 }
 
 .success-msg h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
   color: var(--text-main);
+}
+
+@media (max-width: 480px) {
+  .success-msg h2 {
+    font-size: 1.25rem;
+  }
 }
 
 .success-msg p {
   color: var(--text-muted);
-  font-size: 1.1rem;
-  margin-bottom: 2.5rem;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
 }
 
 /* Footer Section */
 footer {
   width: 100%;
   text-align: center;
-  padding: 4rem 1rem;
+  padding: 0.75rem 1rem;
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.75rem;
 }
 
 .footer-link {

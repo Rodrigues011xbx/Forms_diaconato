@@ -109,3 +109,26 @@ document.querySelectorAll('input, textarea, select').forEach(element => {
 // Initialize Icons
 lucide.createIcons();
 
+// Parallax effect for the hero image
+const imageContainer = document.querySelector('.image-container');
+const heroImage = document.querySelector('.hero-image');
+
+if (imageContainer && heroImage) {
+    imageContainer.addEventListener('mousemove', (e) => {
+        const { left, top, width, height } = imageContainer.getBoundingClientRect();
+        const x = (e.clientX - left) / width - 0.5;
+        const y = (e.clientY - top) / height - 0.5;
+        
+        const rotateY = x * 30; // Tilt intensity
+        const rotateX = -y * 30;
+        
+        heroImage.style.transform = `rotateY(${rotateY - 15}deg) rotateX(${rotateX + 5}deg) scale(1.03)`;
+        heroImage.style.filter = `brightness(1) contrast(1.1) drop-shadow(${x * 50}px ${y * 50}px 30px rgba(0,0,0,0.5))`;
+    });
+
+    imageContainer.addEventListener('mouseleave', () => {
+        heroImage.style.transform = `rotateY(-15deg) rotateX(5deg) scale(1)`;
+        heroImage.style.filter = `brightness(0.8) contrast(1.1)`;
+    });
+}
+
